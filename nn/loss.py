@@ -1,18 +1,20 @@
-from abc import ABC
+from abc import ABC, abstractmethod
 import numpy as np
 from nn.base import Tensor
 
 
-class Loss:
+class Loss(ABC):
     def __init__(self):
         self.loss = Tensor(1)
         self.loss.dx = np.array([1])
 
+    @abstractmethod
     def forward(self, prediction: Tensor, truth: Tensor) -> None:
-        raise NotImplementedError("called abstract method")
+        pass
 
+    @abstractmethod
     def backward(self, prediction: Tensor, truth: Tensor) -> None:
-        raise NotImplementedError("called abstract method")
+        pass
 
 
 class CrossEntropy(Loss, ABC):

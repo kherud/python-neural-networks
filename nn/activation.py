@@ -1,11 +1,10 @@
-from abc import ABC
 import numpy as np
 from nn.layer import Layer
 from nn.base import Tensor
 from typing import List
 
 
-class Sigmoid(Layer, ABC):
+class Sigmoid(Layer):
     def __init__(self, shape) -> None:
         super().__init__(shape, shape)
 
@@ -16,15 +15,15 @@ class Sigmoid(Layer, ABC):
         np.multiply(in_tensor.x * (1 - in_tensor.x), in_tensor.dx, out=out_tensor.dx)
 
 
-class Softmax(Layer, ABC):
+class Softmax(Layer):
     def __init__(self, shape: List) -> None:
         super().__init__(shape, shape)
-        self._exponents = np.empty(shape=shape).astype(np.float32)
-        self._jacobian = np.empty(shape=shape + shape).astype(np.float32)
+        self._exponents = np.empty(shape=shape)
+        self._jacobian = np.empty(shape=(shape[-1], shape[-1]))
 
     def forward(self, in_tensor: Tensor, out_tensor: Tensor) -> None:
         np.exp(in_tensor.x - np.max(in_tensor.x), out=self._exponents)
-        np.divide(self._exponents, self._exponents.sum(axis=0), out=out_tensor.x)
+        np.divide(self._exponents, self._exponents.sum(axis=1), out=out_tensor.x)
 
     def backward(self, in_tensor: Tensor, out_tensor: Tensor) -> None:
         s = in_tensor.x.reshape(-1, 1)
@@ -32,7 +31,7 @@ class Softmax(Layer, ABC):
         np.dot(in_tensor.dx, self._jacobian, out=out_tensor.dx)
 
 
-class ReLU(Layer, ABC):
+class ReLU(Layer):
     def __init__(self, shape) -> None:
         super().__init__(shape, shape)
 

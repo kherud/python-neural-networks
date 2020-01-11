@@ -2,12 +2,12 @@ import numpy as np
 
 
 class Tensor:
-    def __init__(self, shape, x=None, dx=None):
+    def __init__(self, shape, x: np.array = None, dx: np.array = None):
         if x:
-            self.x = np.array(x).astype(np.float32)
+            self.x = np.array(x).reshape(shape)
         else:
-            self.x = np.empty(shape=shape).astype(np.float32)
+            self.x = np.empty(shape=shape)
         if dx:
-            self.dx = np.array(dx).astype(np.float32)
+            self.dx = np.array(dx).reshape(shape)
         else:
-            self.dx = np.empty(shape=shape).astype(np.float32)
+            self.dx = np.empty(shape=shape)
