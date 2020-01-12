@@ -48,7 +48,7 @@ class Dropout(Layer):
 
     def forward(self, in_tensor: Tensor, out_tensor: Tensor) -> None:
         self._mask = np.random.binomial(1, p=self.rate, size=self.input_shape)
-        raise NotImplementedError()
+        out_tensor.x = np.where(self._mask == 0, in_tensor.x, 0)
 
     def backward(self, in_tensor: Tensor, out_tensor: Tensor) -> None:
-        raise NotImplementedError()
+        out_tensor.dx = np.where(self._mask == 0, in_tensor.dx, 0)
