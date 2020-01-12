@@ -1,7 +1,9 @@
-from abc import ABC, abstractmethod
-from nn.base import Tensor
 import numpy as np
 from typing import List
+from abc import ABC, abstractmethod
+
+from nn.base import Tensor
+from nn.initializer import Initializer
 
 
 class Layer(ABC):
@@ -29,10 +31,10 @@ class TrainableLayer(Layer, ABC):
 
 
 class Dense(TrainableLayer):
-    def __init__(self, input_shape: List, output_shape: List, initializer) -> None:
+    def __init__(self, input_shape: List, output_shape: List, initializer: Initializer) -> None:
         super().__init__(input_shape, output_shape, initializer)
-        self.W = Tensor([self.input_shape[-1], self.output_shape[-1]])
-        self.b = Tensor(self.output_shape[-1])
+        self.W = Tensor([self.input_shape[-1], self.output_shape[-1]], initializer=initializer)
+        self.b = Tensor(self.output_shape[-1], initializer=initializer)
 
     def forward(self, in_tensor: Tensor, out_tensor: Tensor) -> None:
         np.add(in_tensor.x @ self.W.x, self.b.x, out=out_tensor.x)

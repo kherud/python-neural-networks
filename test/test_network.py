@@ -28,7 +28,8 @@ class TestNeuralNetwork(unittest.TestCase):
         self.nn1.layers[2].W = self.nn2.layers[2].W = Tensor([3, 2], x=[0.4047, 0.9563, -0.8192, -0.1274, 0.3662, -0.7252])
         self.nn1.layers[2].b = self.nn2.layers[2].b = Tensor([2], x=[0., 0.])
 
-        self.loss_function = nn.loss.CrossEntropy()
+        self.loss1 = nn.loss.CrossEntropy([1, 2])
+        self.loss2 = nn.loss.CrossEntropy([16, 2])
 
     def test_nn1_forward(self):
         expected = [
@@ -65,7 +66,7 @@ class TestNeuralNetwork(unittest.TestCase):
         out_tensor = Tensor([1, 2], x=[0.7095, 0.0942])
 
         self.nn1.forward(in_tensor)
-        self.loss_function.backward(self.nn1.tensors[-1], out_tensor)
+        self.loss1.backward(self.nn1.tensors[-1], out_tensor)
         self.nn1.backward(in_tensor)
 
         np.testing.assert_array_almost_equal(expected_weight_deltas[0], self.nn1.layers[0].W.dx, decimal=4)
@@ -113,7 +114,7 @@ class TestNeuralNetwork(unittest.TestCase):
         out_tensor = Tensor([16, 2], x=[0.7095, 0.0942] * 16)
 
         self.nn2.forward(in_tensor)
-        self.loss_function.backward(self.nn2.tensors[-1], out_tensor)
+        self.loss2.backward(self.nn2.tensors[-1], out_tensor)
         self.nn2.backward(in_tensor)
 
         # lower precision (decimals) due to multiplication imprecision build up
