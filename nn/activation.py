@@ -19,16 +19,14 @@ class Softmax(Layer):
     def __init__(self, shape: List) -> None:
         super().__init__(shape, shape)
         self._exponents = np.empty(shape=shape)
-        self._jacobian = np.empty(shape=(shape[-1], shape[-1]))
 
     def forward(self, in_tensor: Tensor, out_tensor: Tensor) -> None:
-        np.exp(in_tensor.x - np.max(in_tensor.x), out=self._exponents)
-        np.divide(self._exponents, self._exponents.sum(axis=1), out=out_tensor.x)
+        np.exp(in_tensor.x - np.max(in_tensor.x, axis=1).reshape(-1, 1), out=self._exponents)
+        np.divide(self._exponents, self._exponents.sum(axis=1).reshape(-1, 1), out=out_tensor.x)
 
     def backward(self, in_tensor: Tensor, out_tensor: Tensor) -> None:
-        s = in_tensor.x.reshape(-1, 1)
-        np.subtract(np.diagflat(s), np.dot(s, s.T), out=self._jacobian)
-        np.dot(in_tensor.dx, self._jacobian, out=out_tensor.dx)
+        np.subtract(in_tensor.dx * in_tensor.x, np.einsum("ij,jki->ik", in_tensor.dx,
+                                                    np.einsum("ij,ik->jki", in_tensor.x, in_tensor.x)), out=out_tensor.dx)
 
 
 class ReLU(Layer):
@@ -40,3 +38,17 @@ class ReLU(Layer):
 
     def backward(self, in_tensor: Tensor, out_tensor: Tensor) -> None:
         np.multiply(in_tensor.dx, in_tensor.x > 0, out=out_tensor.dx)
+
+
+class Dropout(Layer):
+    def __init__(self, input_shape: List, rate: float = 0.5):
+        super().__init__(input_shape, input_shape)
+        self.rate = rate
+        self._mask = np.zeros(shape=input_shape)
+
+    def forward(self, in_tensor: Tensor, out_tensor: Tensor) -> None:
+        self._mask = np.random.binomial(1, p=self.rate, size=self.input_shape)
+        raise NotImplementedError()
+
+    def backward(self, in_tensor: Tensor, out_tensor: Tensor) -> None:
+        raise NotImplementedError()
