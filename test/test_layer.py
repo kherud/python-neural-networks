@@ -96,14 +96,14 @@ class TestLSTM(unittest.TestCase):
         self.layer1.Uo = Tensor([3, 3], x=[-0.315, -0.1448, -0.2816, -0.3676, 0.059, -0.4758, -0.103, -0.0204, -0.0876])
         self.layer1.Wo = Tensor([2, 3], x=[0.4518, 0.1388, -0.5324, 0.5744, 0.6232, 0.3959])
         self.layer1.bo = Tensor(3, x=[0., 0., 0.])
-        self.layer1.Uc = Tensor([3, 3], x=[0.3936, -0.0901, 0.2262, -0.0697, 0.3737, -0.2524, 0.048, 0.3168, 0.3984])
-        self.layer1.Wc = Tensor([2, 3], x=[0.3499, -0.0971, -0.6283, -0.2142, 0.5399, -0.3755])
-        self.layer1.bc = Tensor(3, x=[0., 0., 0.])
+        self.layer1.Ua = Tensor([3, 3], x=[0.3936, -0.0901, 0.2262, -0.0697, 0.3737, -0.2524, 0.048, 0.3168, 0.3984])
+        self.layer1.Wa = Tensor([2, 3], x=[0.3499, -0.0971, -0.6283, -0.2142, 0.5399, -0.3755])
+        self.layer1.ba = Tensor(3, x=[0., 0., 0.])
 
         self.layer2 = nn.layer.LSTM([2, 2, 2], [2, 1], None)
 
-        self.layer2.h_init = Tensor([2, 1], x=[0., 0.])
-        self.layer2.c_init = Tensor([2, 1], x=[0., 0.])
+        self.layer2.h_init = Tensor([1, 2], x=[0., 0.])
+        self.layer2.c_init = Tensor([1, 2], x=[0., 0.])
 
         # weights
         self.layer2.Uf = Tensor([1, 1], x=[0.1])
@@ -115,10 +115,28 @@ class TestLSTM(unittest.TestCase):
         self.layer2.Uo = Tensor([1, 1], x=[0.25])
         self.layer2.Wo = Tensor([2, 1], x=[0.6, 0.4])
         self.layer2.bo = Tensor(1, x=[0.1])
-        self.layer2.Uc = Tensor([1, 1], x=[0.15])
-        self.layer2.Wc = Tensor([2, 1], x=[0.45, 0.25])
-        self.layer2.bc = Tensor(1, x=[0.2])
+        self.layer2.Ua = Tensor([1, 1], x=[0.15])
+        self.layer2.Wa = Tensor([2, 1], x=[0.45, 0.25])
+        self.layer2.ba = Tensor(1, x=[0.2])
 
+        self.layer3 = nn.layer.LSTM([3, 1, 2], [1, 3], None)
+
+        self.layer3.h_init = Tensor([1, 3], x=[0., 0., 0.])
+        self.layer3.c_init = Tensor([1, 3], x=[0., 0., 0.])
+
+        # weights
+        self.layer3.Uf = Tensor([3, 3], x=0.1*np.arange(-9, 0).reshape((3, 3)).T)
+        self.layer3.Wf = Tensor([2, 3], x=0.1*np.arange(-6, 0).reshape((3, 2)).T)
+        self.layer3.bf = Tensor(3, x=[1., 1., 1.])
+        self.layer3.Ui = Tensor([3, 3], x=0.1*np.arange(-3, 6).reshape((3, 3)).T)
+        self.layer3.Wi = Tensor([2, 3], x=0.1*np.arange(-3, 3).reshape((3, 2)).T)
+        self.layer3.bi = Tensor(3, x=[1., 1., 1.])
+        self.layer3.Uo = Tensor([3, 3], x=0.1*np.arange(-6, 3).reshape((3, 3)).T)
+        self.layer3.Wo = Tensor([2, 3], x=0.1*np.arange(-4, 2).reshape((3, 2)).T)
+        self.layer3.bo = Tensor(3, x=[1., 1., 1.])
+        self.layer3.Ua = Tensor([3, 3], x=0.1 * np.arange(9).reshape((3, 3)).T)
+        self.layer3.Wa = Tensor([2, 3], x=0.1 * np.arange(6).reshape((3, 2)).T)
+        self.layer3.ba = Tensor(3, x=[1., 1., 1.])
 
     def test_forward1(self):
         in_tensor = Tensor([3, 1, 2], x=[0.4893, 0.9738, 0.3544, 0.0961, 0.0487, 0.9644])
@@ -128,10 +146,20 @@ class TestLSTM(unittest.TestCase):
 
         print(out_tensor.x)
 
+    @unittest.SkipTest
     def test_forward2(self):
         in_tensor = Tensor([2, 2, 2], x=[1., 2., 0.5, 3., 1., 2., 0.5, 3.])
         out_tensor = Tensor([2, 1])
 
         self.layer2.forward(in_tensor, out_tensor)
+
+    @unittest.SkipTest
+    def test_forward3(self):
+        in_tensor = Tensor([3, 1, 2], x=[-1.5, -1., -0.5, 0., 0.5, 1.])
+        out_tensor = Tensor([1, 3])
+
+        self.layer3.forward(in_tensor, out_tensor)
+
+        print(out_tensor.x)
 
 

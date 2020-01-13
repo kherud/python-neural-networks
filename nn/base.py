@@ -21,3 +21,5 @@ class Tensor:
             self.dx = np.array(dx).reshape(shape)
         else:
             self.dx = np.empty(shape=shape)
+        # self.x = self.x.astype(np.float32)
+        # self.dx = self.x.astype(np.float32)

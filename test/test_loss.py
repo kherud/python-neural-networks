@@ -6,8 +6,8 @@ from nn.base import Tensor
 
 class TestCrossEntropy(unittest.TestCase):
     def setUp(self):
-        self.loss1 = nn.loss.CrossEntropy(1)
-        self.loss2 = nn.loss.CrossEntropy(16)
+        self.loss1 = nn.loss.CrossEntropy([1])
+        self.loss2 = nn.loss.CrossEntropy([16])
         self.x1 = Tensor([1, 2], [0.4761, 0.5239])
         self.y1 = Tensor([1, 2], [0.7095, 0.0942])
         self.x2 = Tensor([16, 2], [0.4761, 0.5239] * 16)

@@ -73,42 +73,47 @@ class LSTM(TrainableLayer):
         self.Uo = Tensor([output_shape[-1], output_shape[-1]])
         self.Wo = Tensor([input_shape[-1], output_shape[-1]])
         self.bo = Tensor(output_shape[-1])
-        self.Uc = Tensor([output_shape[-1], output_shape[-1]])
-        self.Wc = Tensor([input_shape[-1], output_shape[-1]])
-        self.bc = Tensor(output_shape[-1])
+        self.Ua = Tensor([output_shape[-1], output_shape[-1]])
+        self.Wa = Tensor([input_shape[-1], output_shape[-1]])
+        self.ba = Tensor(output_shape[-1])
 
     def forward(self, in_tensor: Tensor, out_tensor: Tensor) -> None:
         for step in range(self.input_shape[0]):
             h_step = self.h_init.x if step == 0 else self.h.x[step-1]
             c_step = self.c_init.x if step == 0 else self.c.x[step-1]
 
-            self._forget_gate(in_tensor.x[step], self.f.x[step], h_step)
-            self._input_gate(in_tensor.x[step], self.i.x[step], self.a.x[step], h_step)
-            self._output_gate(in_tensor.x[step], self.o.x[step],  h_step)
-            self._state_update(step, c_step)
+            self._forget_gate_forward(in_tensor.x[step], self.f.x[step], h_step)
+            self._input_gate_forward(in_tensor.x[step], self.i.x[step], self.a.x[step], h_step)
+            self._output_gate_forward(in_tensor.x[step], self.o.x[step],  h_step)
+            self._state_update_forward(step, c_step)
 
         np.copyto(out_tensor.x, self.h.x[-1])
 
-    def _forget_gate(self, _in: np.array, _out: np.array, h: np.array):
+    def _forget_gate_forward(self, _in: np.array, _out: np.array, h: np.array):
         np.add(h @ self.Uf.x + _in @ self.Wf.x, self.bf.x, out=_out)
         self._sigmoid(_out)
 
-    def _input_gate(self, _in: np.array, _i_out: np.array, _a_out: np.array, h: np.array):
+    def _input_gate_forward(self, _in: np.array, _i_out: np.array, _a_out: np.array, h: np.array):
         np.add(h @ self.Ui.x + _in @ self.Wi.x, self.bi.x, out=_i_out)
         self._sigmoid(_i_out)
-        np.add(h @ self.Uc.x + _in @ self.Wc.x, self.bc.x, out=_a_out)
+        np.add(h @ self.Ua.x + _in @ self.Wa.x, self.ba.x, out=_a_out)
         self._tanh(_a_out)
 
-    def _output_gate(self, _in: np.array, _out: np.array, h: np.array):
+    def _output_gate_forward(self, _in: np.array, _out: np.array, h: np.array):
         np.add(h @ self.Uo.x + _in @ self.Wo.x, self.bo.x, out=_out)
         self._sigmoid(_out)
 
-    def _state_update(self, step, c):
+    def _state_update_forward(self, step, c):
         np.add(self.a.x[step] * self.i.x[step], self.f.x[step] * c, out=self.c.x[step])
         np.multiply(np.tanh(self.c.x[step]), self.o.x[step], out=self.h.x[step])
 
     def backward(self, in_tensor: Tensor, out_tensor: Tensor) -> None:
-        pass
+        for step in reversed(range(self.input_shape[0])):
+            self._state_update_backward(step, c_step)
+            self._forget_gate_forward(in_tensor.x[step], self.f.x[step], h_step)
+            self._input_gate_forward(in_tensor.x[step], self.i.x[step], self.a.x[step], h_step)
+            self._output_gate_forward(in_tensor.x[step], self.o.x[step], h_step)
+            self._state_update_forward(step, c_step)
 
     def calculate_delta_weights(self, in_tensor: Tensor, out_tensor: Tensor) -> None:
         pass
