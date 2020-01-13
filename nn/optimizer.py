@@ -1,12 +1,11 @@
 import tqdm
 import logging
 import numpy as np
-from typing import List
+from typing import List, Callable
 from abc import ABC, abstractmethod
 
 from nn.base import Tensor
 from nn.loss import Loss
-from nn.metrics import Metric
 from nn.network import NeuralNetwork
 
 
@@ -21,7 +20,7 @@ class Optimizer(ABC):
                  y_test: List[Tensor] = None,
                  epochs: int = 1,
                  batch_size: int = 16,
-                 metrics: List[Metric] = None):
+                 metrics: List[Callable] = None):
         for epoch in range(epochs):
             desc = "train {}/{} loss = {{:.3f}}".format(epoch + 1, epochs)
             pbar = tqdm.trange(len(x_train), desc=desc.format(np.inf))
@@ -40,9 +39,14 @@ class Optimizer(ABC):
                 self._optimize_layers(neural_network)
 
             if x_test is not None and y_test is not None:
+                metrics = metrics if metrics is not None else []
                 self._evaluate(neural_network, x_test, y_test, metrics)
 
-    def _evaluate(self, neural_network, x_test, y_test, metrics):
+    def _evaluate(self,
+                  neural_network: NeuralNetwork,
+                  x_test: List[Tensor],
+                  y_test: List[Tensor],
+                  metrics: List[Callable]):
             predictions = []
             truths = []
             loss_total = 0
@@ -55,14 +59,11 @@ class Optimizer(ABC):
                 self.loss.forward(prediction, y_test[i])
                 loss = self.loss.get_loss()
                 loss_total -= loss_total / (i + 1) - loss / (i + 1)
-            desc = "test: loss = {:.4f}".format(loss)
-            if metrics is not None:
-                for metric in metrics:
-                    metric.evaluate(np.array(predictions), np.array(truths))
-                    desc += "; {}".format(str(metric))
+            desc = "test: loss = {:.4f}".format(loss_total)
+            for metric in metrics:
+                desc += "; {} = {:.4f}".format(metric.__name__, metric(predictions, truths))
             print(desc)
             # pbar.set_description(desc)
-
 
     def _optimize_layers(self, neural_network):
         for layer in neural_network.layers:

@@ -6,7 +6,7 @@ from nn.base import Tensor
 from nn.initializer import Normal, Xavier
 from nn.layer import Dense
 from nn.loss import CrossEntropy
-from nn.metrics import F1Score, Accuracy
+from nn.metrics import f1_score_mean, accuracy
 from nn.network import NeuralNetwork
 from nn.optimizer import MinibatchGradientDescent, Adam, SimpleAdam, Momentum, Adagrad, RMSProp
 
@@ -35,7 +35,7 @@ loss = CrossEntropy([batch_size, 10])
 # optimizer = MinibatchGradientDescent(loss)
 optimizer = RMSProp(loss, learning_rate=1e-3)
 initializer = Xavier()
-metrics = [Accuracy(), F1Score()]
+metrics = [accuracy, f1_score_mean]
 
 neural_network = NeuralNetwork([
     Dense([batch_size, 784], [batch_size, 256], initializer),
