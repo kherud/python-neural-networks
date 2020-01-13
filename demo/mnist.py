@@ -3,7 +3,7 @@ import tensorflow as tf
 
 from nn.activation import Sigmoid, Softmax, ReLU, Dropout
 from nn.base import Tensor
-from nn.initializer import Normal, Xavier
+from nn.initializer import normal, xavier
 from nn.layer import Dense
 from nn.loss import CrossEntropy
 from nn.metrics import f1_score_mean, accuracy
@@ -34,15 +34,14 @@ for i in range(len(_x_test) // batch_size):
 loss = CrossEntropy([batch_size, 10])
 # optimizer = MinibatchGradientDescent(loss)
 optimizer = RMSProp(loss, learning_rate=1e-3)
-initializer = Xavier()
 metrics = [accuracy, f1_score_mean]
 
 neural_network = NeuralNetwork([
-    Dense([batch_size, 784], [batch_size, 256], initializer),
+    Dense([batch_size, 784], [batch_size, 256], xavier),
     Sigmoid([batch_size, 256]),
-    Dense([batch_size, 256], [batch_size, 64], initializer),
+    Dense([batch_size, 256], [batch_size, 64], xavier),
     Sigmoid([batch_size, 64]),
-    Dense([batch_size, 64], [batch_size, 10], initializer),
+    Dense([batch_size, 64], [batch_size, 10], xavier),
     Softmax([batch_size, 10])
 ])
 

@@ -1,4 +1,5 @@
 import numpy as np
+from typing import Callable
 
 
 class Tensor:
@@ -6,7 +7,7 @@ class Tensor:
                  shape=None,
                  x: np.array = None,
                  dx: np.array = None,
-                 initializer = None):
+                 initializer: Callable = None):
         if shape is None:
             assert x is not None
             shape = x.shape
@@ -16,7 +17,7 @@ class Tensor:
         else:
             self.x = np.empty(shape=shape)
             if initializer is not None:
-                initializer.init(self)
+                initializer(self)
         if dx is not None:
             self.dx = np.array(dx).reshape(shape)
         else:
