@@ -3,6 +3,14 @@ import numpy as np
 from nn.base import Tensor
 
 
+def zeros(tensor: Tensor):
+    tensor.x = np.zeros(shape=tensor.shape)
+
+
+def ones(tensor: Tensor):
+    tensor.x = np.ones(shape=tensor.shape)
+
+
 def normal(tensor: Tensor):
     tensor.x = 2 * np.random.normal(size=tensor.shape) / np.prod(tensor.shape)
 

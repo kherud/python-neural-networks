@@ -3,6 +3,7 @@ from typing import List, Callable
 from abc import ABC, abstractmethod
 
 from nn.base import Tensor
+from nn.initializer import zeros, ones, xavier_normal
 
 
 class Layer(ABC):
@@ -20,9 +21,14 @@ class Layer(ABC):
 
 
 class TrainableLayer(Layer, ABC):
-    def __init__(self, input_shape: List, output_shape: List, initializer: Callable) -> None:
+    def __init__(self,
+                 input_shape: List,
+                 output_shape: List,
+                 weights_initializer: Callable,
+                 bias_initializer: Callable) -> None:
         super().__init__(input_shape, output_shape)
-        self.initializer = initializer
+        self.weights_initializer = weights_initializer
+        self.bias_initializer = bias_initializer
 
     @abstractmethod
     def calculate_delta_weights(self, in_tensor: Tensor, out_tensor: Tensor) -> None:
@@ -30,10 +36,14 @@ class TrainableLayer(Layer, ABC):
 
 
 class Dense(TrainableLayer):
-    def __init__(self, input_shape: List, output_shape: List, initializer: Callable) -> None:
-        super().__init__(input_shape, output_shape, initializer)
-        self.W = Tensor([self.input_shape[-1], self.output_shape[-1]], initializer=initializer)
-        self.b = Tensor([self.output_shape[-1]], initializer=initializer)
+    def __init__(self,
+                 input_shape: List,
+                 output_shape: List,
+                 weights_initializer: Callable = xavier_normal,
+                 bias_initializer: Callable = zeros) -> None:
+        super().__init__(input_shape, output_shape, weights_initializer, bias_initializer)
+        self.W = Tensor([self.input_shape[-1], self.output_shape[-1]], initializer=weights_initializer)
+        self.b = Tensor([self.output_shape[-1]], initializer=bias_initializer)
 
     def forward(self, in_tensor: Tensor, out_tensor: Tensor) -> None:
         np.add(in_tensor.x @ self.W.x, self.b.x, out=out_tensor.x)
