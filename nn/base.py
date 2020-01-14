@@ -1,10 +1,10 @@
 import numpy as np
-from typing import Callable
+from typing import Callable, List
 
 
 class Tensor:
     def __init__(self,
-                 shape=None,
+                 shape: List = None,
                  x: np.array = None,
                  dx: np.array = None,
                  initializer: Callable = None):

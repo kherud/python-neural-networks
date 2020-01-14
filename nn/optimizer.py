@@ -10,8 +10,11 @@ from nn.network import NeuralNetwork
 
 
 class Optimizer(ABC):
-    def __init__(self, loss: Loss):
+    def __init__(self,
+                 loss: Loss,
+                 weight_decay: float = None):
         self.loss = loss
+        self.weight_decay = weight_decay
 
     def optimize(self, neural_network: NeuralNetwork,
                  x_train: List[Tensor],
@@ -47,28 +50,31 @@ class Optimizer(ABC):
                   x_test: List[Tensor],
                   y_test: List[Tensor],
                   metrics: List[Callable]):
-            predictions = []
-            truths = []
-            loss_total = 0
-            # pbar = tqdm.trange(len(x_test), desc="test")
-            for i in range(len(x_test)):
-                prediction = neural_network.forward(x_test[i])
-                predictions.extend(np.argmax(prediction.x, axis=1))
-                truths.extend(np.argmax(y_test[i].x, axis=1))
+        predictions = []
+        truths = []
+        loss_total = 0
+        # pbar = tqdm.trange(len(x_test), desc="test")
+        for i in range(len(x_test)):
+            prediction = neural_network.forward(x_test[i])
+            predictions.extend(np.argmax(prediction.x, axis=1))
+            truths.extend(np.argmax(y_test[i].x, axis=1))
 
-                self.loss.forward(prediction, y_test[i])
-                loss = self.loss.get_loss()
-                loss_total -= loss_total / (i + 1) - loss / (i + 1)
-            desc = "test: loss = {:.4f}".format(loss_total)
-            for metric in metrics:
-                desc += "; {} = {:.4f}".format(metric.__name__, metric(predictions, truths))
-            print(desc)
-            # pbar.set_description(desc)
+            self.loss.forward(prediction, y_test[i])
+            loss = self.loss.get_loss()
+            loss_total -= loss_total / (i + 1) - loss / (i + 1)
+        desc = "test: loss = {:.4f}".format(loss_total)
+        for metric in metrics:
+            desc += "; {} = {:.4f}".format(metric.__name__, metric(predictions, truths))
+        print(desc)
+        # pbar.set_description(desc)
 
     def _optimize_layers(self, neural_network):
         for layer in neural_network.layers:
             if not hasattr(layer, 'calculate_delta_weights'):
                 continue
+            if self.weight_decay:
+                layer.W.dx += self.weight_decay * layer.W.x
+                layer.b.dx += self.weight_decay * layer.b.x
             self._optimize_parameters(layer.W)
             self._optimize_parameters(layer.b)
 
@@ -78,8 +84,11 @@ class Optimizer(ABC):
 
 
 class MinibatchGradientDescent(Optimizer):
-    def __init__(self, loss: Loss, learning_rate: float = 1e-3):
-        super().__init__(loss)
+    def __init__(self,
+                 loss: Loss,
+                 weight_decay: float = None,
+                 learning_rate: float = 1e-3):
+        super().__init__(loss, weight_decay)
         self.learning_rate = learning_rate
 
     def _optimize_parameters(self, tensor: Tensor):
@@ -87,8 +96,11 @@ class MinibatchGradientDescent(Optimizer):
 
 
 class Momentum(Optimizer):
-    def __init__(self, loss: Loss, learning_rate: float = 1e-3):
-        super().__init__(loss)
+    def __init__(self,
+                 loss: Loss,
+                 weight_decay: float = None,
+                 learning_rate: float = 1e-3):
+        super().__init__(loss, weight_decay)
         self.learning_rate = learning_rate
         self.states = {}
         self.mu = 0.9
@@ -106,8 +118,11 @@ class Momentum(Optimizer):
 
 
 class Adagrad(Optimizer):
-    def __init__(self, loss: Loss, learning_rate: float = 1e-3):
-        super().__init__(loss)
+    def __init__(self,
+                 loss: Loss,
+                 weight_decay: float = None,
+                 learning_rate: float = 1e-3):
+        super().__init__(loss, weight_decay)
         self.learning_rate = learning_rate
         self.states = {}
         self.eps = 1e-8
@@ -125,8 +140,11 @@ class Adagrad(Optimizer):
 
 
 class RMSProp(Optimizer):
-    def __init__(self, loss: Loss, learning_rate: float = 1e-3):
-        super().__init__(loss)
+    def __init__(self,
+                 loss: Loss,
+                 weight_decay: float = None,
+                 learning_rate: float = 1e-3):
+        super().__init__(loss, weight_decay)
         self.learning_rate = learning_rate
         self.states = {}
         self.eps = 1e-8
@@ -145,8 +163,11 @@ class RMSProp(Optimizer):
 
 
 class SimpleAdam(Optimizer):
-    def __init__(self, loss: Loss, learning_rate: float = 1e-3):
-        super().__init__(loss)
+    def __init__(self,
+                 loss: Loss,
+                 weight_decay: float = None,
+                 learning_rate: float = 1e-3):
+        super().__init__(loss, weight_decay)
         self.learning_rate = learning_rate
         self.states = {}
         self.beta1 = 0.9
@@ -166,9 +187,13 @@ class SimpleAdam(Optimizer):
 
         tensor.x -= self.learning_rate * state["m"] / (np.sqrt(state["v"]) + self.eps)
 
+
 class Adam(Optimizer):
-    def __init__(self, loss: Loss, learning_rate: float = 1e-3):
-        super().__init__(loss)
+    def __init__(self,
+                 loss: Loss,
+                 weight_decay: float = None,
+                 learning_rate: float = 1e-3):
+        super().__init__(loss, weight_decay)
         self.learning_rate = learning_rate
         self.states = {}
         self.beta1 = 0.9

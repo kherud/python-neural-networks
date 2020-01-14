@@ -3,7 +3,7 @@ import tensorflow as tf
 
 from nn.activation import Sigmoid, Softmax, ReLU, Dropout
 from nn.base import Tensor
-from nn.initializer import normal, xavier
+from nn.initializer import normal, kaiming_normal
 from nn.layer import Dense
 from nn.loss import CrossEntropy
 from nn.metrics import f1_score_mean, accuracy
@@ -33,15 +33,17 @@ for i in range(len(_x_test) // batch_size):
 
 loss = CrossEntropy([batch_size, 10])
 # optimizer = MinibatchGradientDescent(loss)
-optimizer = RMSProp(loss, learning_rate=1e-3)
+optimizer = RMSProp(loss, weight_decay=1e-8, learning_rate=1e-3)
+# optimizer = SimpleAdam(loss, weight_decay=1e-8, learning_rate=1e-3)
 metrics = [accuracy, f1_score_mean]
+# xavier for tanh, kaiming else
 
 neural_network = NeuralNetwork([
-    Dense([batch_size, 784], [batch_size, 256], xavier),
-    Sigmoid([batch_size, 256]),
-    Dense([batch_size, 256], [batch_size, 64], xavier),
-    Sigmoid([batch_size, 64]),
-    Dense([batch_size, 64], [batch_size, 10], xavier),
+    Dense([batch_size, 784], [batch_size, 256], kaiming_normal),
+    ReLU([batch_size, 256]),
+    Dense([batch_size, 256], [batch_size, 64], kaiming_normal),
+    ReLU([batch_size, 64]),
+    Dense([batch_size, 64], [batch_size, 10], kaiming_normal),
     Softmax([batch_size, 10])
 ])
 
