@@ -4,32 +4,39 @@ from nn.base import Tensor
 
 
 def zeros(tensor: Tensor):
-    tensor.x = np.zeros(shape=tensor.shape)
+    init = np.zeros(shape=tensor.shape)
+    np.copyto(tensor.x, init)
 
 
 def ones(tensor: Tensor):
-    tensor.x = np.ones(shape=tensor.shape)
+    init = np.ones(shape=tensor.shape)
+    np.copyto(tensor.x, init)
 
 
 def normal(tensor: Tensor):
-    tensor.x = 2 * np.random.normal(size=tensor.shape) / np.prod(tensor.shape)
+    init = 2 * np.random.normal(size=tensor.shape) / np.prod(tensor.shape)
+    np.copyto(tensor.x, init)
 
 
 def xavier_uniform(tensor: Tensor):
     limit = np.sqrt(6 / np.sum(tensor.shape))
-    tensor.x = np.random.uniform(-limit, limit, size=tensor.shape)
+    init = np.random.uniform(-limit, limit, size=tensor.shape)
+    np.copyto(tensor.x, init)
 
 
 def xavier_normal(tensor: Tensor):
     std_dev = np.sqrt(2 / np.sum(tensor.shape))
-    tensor.x = np.random.normal(scale=std_dev)
+    init = np.random.normal(scale=std_dev, size=tensor.shape)
+    np.copyto(tensor.x, init)
 
 
 def kaiming_uniform(tensor: Tensor):
     limit = np.sqrt(6 / tensor.shape[0])
-    tensor.x = np.random.uniform(-limit, limit, size=tensor.shape)
+    init = np.random.uniform(-limit, limit, size=tensor.shape)
+    np.copyto(tensor.x, init)
 
 
 def kaiming_normal(tensor: Tensor):
     std_dev = np.sqrt(2 / tensor.shape[0])
-    tensor.x = np.random.normal(scale=std_dev, size=tensor.shape)
+    init = np.random.normal(scale=std_dev, size=tensor.shape)
+    np.copyto(tensor.x, init)

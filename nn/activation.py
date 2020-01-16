@@ -5,7 +5,7 @@ from typing import List
 
 
 class Sigmoid(Layer):
-    def __init__(self, shape) -> None:
+    def __init__(self, shape: List) -> None:
         super().__init__(shape, shape)
 
     def forward(self, in_tensor: Tensor, out_tensor: Tensor) -> None:
@@ -30,7 +30,7 @@ class Softmax(Layer):
 
 
 class ReLU(Layer):
-    def __init__(self, shape) -> None:
+    def __init__(self, shape: List) -> None:
         super().__init__(shape, shape)
 
     def forward(self, in_tensor: Tensor, out_tensor: Tensor) -> None:
@@ -38,17 +38,3 @@ class ReLU(Layer):
 
     def backward(self, in_tensor: Tensor, out_tensor: Tensor) -> None:
         np.multiply(in_tensor.dx, in_tensor.x > 0, out=out_tensor.dx)
-
-
-class Dropout(Layer):
-    def __init__(self, input_shape: List, rate: float = 0.5):
-        super().__init__(input_shape, input_shape)
-        self.rate = rate
-        self._mask = np.zeros(shape=input_shape)
-
-    def forward(self, in_tensor: Tensor, out_tensor: Tensor) -> None:
-        self._mask = np.random.binomial(1, p=self.rate, size=self.input_shape)
-        out_tensor.x = np.where(self._mask == 0, in_tensor.x, 0)
-
-    def backward(self, in_tensor: Tensor, out_tensor: Tensor) -> None:
-        out_tensor.dx = np.where(self._mask == 0, in_tensor.dx, 0)

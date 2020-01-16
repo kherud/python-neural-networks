@@ -74,7 +74,6 @@ class Optimizer(ABC):
                 continue
             if self.weight_decay:
                 layer.W.dx += self.weight_decay * layer.W.x
-                layer.b.dx += self.weight_decay * layer.b.x
             self._optimize_parameters(layer.W)
             self._optimize_parameters(layer.b)
 

@@ -36,7 +36,7 @@ loss = CrossEntropy([batch_size, 10])
 optimizer = RMSProp(loss, weight_decay=1e-8, learning_rate=1e-3)
 # optimizer = SimpleAdam(loss, weight_decay=1e-8, learning_rate=1e-3)
 metrics = [accuracy, f1_score_mean]
-# xavier for tanh, kaiming else
+# xavier for tanh sigmoid, kaiming else
 
 neural_network = NeuralNetwork([
     Dense([batch_size, 784], [batch_size, 256], kaiming_normal),
