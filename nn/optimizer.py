@@ -72,10 +72,12 @@ class Optimizer(ABC):
         for layer in neural_network.layers:
             if not hasattr(layer, 'calculate_delta_weights'):
                 continue
-            if self.weight_decay:
-                layer.W.dx += self.weight_decay * layer.W.x
-            self._optimize_parameters(layer.W)
-            self._optimize_parameters(layer.b)
+            for weight in layer.get_weights():
+                if self.weight_decay:
+                    weight.dx += self.weight_decay * weight.x
+                self._optimize_parameters(weight)
+            for bias in layer.get_bias():
+                self._optimize_parameters(bias)
 
     @abstractmethod
     def _optimize_parameters(self, tensor: Tensor):

@@ -145,25 +145,42 @@ class TestLSTM(unittest.TestCase):
         self.layer2.ba = Tensor([1], x=[0.2])
         """
 
-        self.layer3 = nn.layer.LSTM([3, 1, 2], [1, 3])
+        self.layer3 = nn.layer.LSTM([1, 3, 2], [1, 3])
 
         self.layer3.h_init = Tensor([1, 3], x=[0., 0., 0.])
         self.layer3.c_init = Tensor([1, 3], x=[0., 0., 0.])
 
-        # weights
-        self.layer3.Uf = Tensor([3, 3], x=0.1*np.arange(-9, 0).reshape((3, 3)).T)
-        self.layer3.Wf = Tensor([2, 3], x=0.1*np.arange(-6, 0).reshape((3, 2)).T)
-        self.layer3.bf = Tensor([3], x=[1., 1., 1.])
-        self.layer3.Ui = Tensor([3, 3], x=0.1*np.arange(-3, 6).reshape((3, 3)).T)
-        self.layer3.Wi = Tensor([2, 3], x=0.1*np.arange(-3, 3).reshape((3, 2)).T)
-        self.layer3.bi = Tensor([3], x=[1., 1., 1.])
-        self.layer3.Uo = Tensor([3, 3], x=0.1*np.arange(-6, 3).reshape((3, 3)).T)
-        self.layer3.Wo = Tensor([2, 3], x=0.1*np.arange(-4, 2).reshape((3, 2)).T)
-        self.layer3.bo = Tensor([3], x=[1., 1., 1.])
-        self.layer3.Ua = Tensor([3, 3], x=0.1 * np.arange(9).reshape((3, 3)).T)
-        self.layer3.Wa = Tensor([2, 3], x=0.1 * np.arange(6).reshape((3, 2)).T)
-        self.layer3.ba = Tensor([3], x=[1., 1., 1.])
+        self.layer3.W.x[:, :3] = 0.1 * np.arange(6).reshape((3, 2)).T
+        self.layer3.W.x[:, 3:6] = 0.1*np.arange(-3, 3).reshape((3, 2)).T
+        self.layer3.W.x[:, 6:9] = 0.1*np.arange(-6, 0).reshape((3, 2)).T
+        self.layer3.W.x[:, 9:12] = 0.1*np.arange(-4, 2).reshape((3, 2)).T
+        self.layer3.U.x[:, :3] = 0.1 * np.arange(9).reshape((3, 3)).T
+        self.layer3.U.x[:, 3:6] = 0.1*np.arange(-3, 6).reshape((3, 3)).T
+        self.layer3.U.x[:, 6:9] = 0.1*np.arange(-9, 0).reshape((3, 3)).T
+        self.layer3.U.x[:, 9:12] = 0.1*np.arange(-6, 3).reshape((3, 3)).T
+        self.layer3.b.x[:3] = np.array([1., 1., 1.]).reshape(3)
+        self.layer3.b.x[3:6] = np.array([1., 1., 1.]).reshape(3)
+        self.layer3.b.x[6:9] = np.array([1., 1., 1.]).reshape(3)
+        self.layer3.b.x[9:12] = np.array([1., 1., 1.]).reshape(3)
 
+
+        self.layer4 = nn.layer.LSTM([16, 2, 2], [16, 2, 1])
+
+        self.layer4.h_init = Tensor([1, 1], x=[0.])
+        self.layer4.c_init = Tensor([1, 1], x=[0.])
+
+        self.layer4.W.x[:, :1] = np.array([0.45, 0.25]).reshape(-1, 1)
+        self.layer4.W.x[:, 1:2] = np.array([0.95, 0.8]).reshape(-1, 1)
+        self.layer4.W.x[:, 2:3] = np.array([0.7, 0.45]).reshape(-1, 1)
+        self.layer4.W.x[:, 3:4] = np.array([0.6, 0.4]).reshape(-1, 1)
+        self.layer4.U.x[:, :1] = np.array([0.15]).reshape(-1, 1)
+        self.layer4.U.x[:, 1:2] = np.array([0.8]).reshape(-1, 1)
+        self.layer4.U.x[:, 2:3] = np.array([0.1]).reshape(-1, 1)
+        self.layer4.U.x[:, 3:4] = np.array([0.25]).reshape(-1, 1)
+        self.layer4.b.x[:1] = np.array([0.2]).reshape(1)
+        self.layer4.b.x[1:2] = np.array([0.65]).reshape(1)
+        self.layer4.b.x[2:3] = np.array([0.15]).reshape(1)
+        self.layer4.b.x[3:4] = np.array([0.1]).reshape(1)
 
     def test_forward1(self):
         in_tensor = Tensor([1, 3, 2], x=[0.4893, 0.9738, 0.3544, 0.0961, 0.0487, 0.9644])
@@ -173,26 +190,76 @@ class TestLSTM(unittest.TestCase):
 
         print(out_tensor.x)
 
-    def test_forward2(self):
-        f_in_tensor = Tensor([1, 2, 2], x=[1., 2., 0.5, 3.])
-        f_out_tensor = Tensor([2, 1])
+    def test_layer2(self):
+        in_tensor = Tensor([1, 2, 2], x=[1., 2., 0.5, 3.])
+        out_tensor = Tensor([1, 2, 1], dx=[0.03631, -0.47803])
 
-        self.layer2.forward(f_in_tensor, f_out_tensor)
+        expected_gates_x = np.array([0.8177, 0.9608, 0.8519, 0.8175, 0.8498, 0.9811, 0.8703, 0.8499]).reshape((2, 1, 4))
+        expected_gates_dx = np.array([-0.0170, -0.0016, -0., 0.0017, -0.0193, -0.0011, -0.0063, -0.0553]).reshape((2, 1, 4))
+        expected_h = np.array([0.5363, 0.7719]).reshape((2, 1, 1))
+        expected_dh = np.array([0.0180, -0.4780]).reshape((2, 1, 1))
+        expected_c = np.array([0.7857, 1.5176]).reshape((2, 1, 1))
+        expected_dc = np.array([-0.0534, -0.0711]).reshape((2, 1, 1))
+        expected_dW = np.array([-0.0267, -0.0022,  -0.0031, -0.0259, -0.0922, -0.0066, -0.0189, -0.1626]).reshape((2, 4))
+        expected_dU = np.array([-0.0103, -0.0005, -0.0033, -0.0297]).reshape((1, 4))
+        expected_db = np.array([-0.0364, -0.0027, -0.0063, -0.0536])
+        expected_dx = np.array([-0.0081, -0.0048, -0.0474, -0.0307]).reshape((1, 2, 2))
 
-        b_in_tensor = Tensor([1, 2, 1], dx=[0.03631, -0.47803])
-        b_out_tensor = Tensor([1, 2, 2])
+        self.layer2.forward(in_tensor, out_tensor)
 
-        self.layer2.backward(b_in_tensor, b_out_tensor)
+        self.layer2.backward(out_tensor, in_tensor)
 
-        print(b_out_tensor.x)
+        self.layer2.calculate_delta_weights(out_tensor, in_tensor)
 
-    @unittest.SkipTest
+        np.testing.assert_array_almost_equal(expected_gates_x, self.layer2.gates.x, decimal=4)
+        np.testing.assert_array_almost_equal(expected_gates_dx, self.layer2.gates.dx, decimal=4)
+        np.testing.assert_array_almost_equal(expected_h, self.layer2.h.x, decimal=4)
+        np.testing.assert_array_almost_equal(expected_dh, self.layer2.h.dx, decimal=4)
+        np.testing.assert_array_almost_equal(expected_c, self.layer2.c.x, decimal=4)
+        np.testing.assert_array_almost_equal(expected_dc, self.layer2.c.dx, decimal=4)
+        np.testing.assert_array_almost_equal(expected_dW, self.layer2.W.dx, decimal=4)
+        np.testing.assert_array_almost_equal(expected_dU, self.layer2.U.dx, decimal=4)
+        np.testing.assert_array_almost_equal(expected_db, self.layer2.b.dx, decimal=4)
+        np.testing.assert_array_almost_equal(expected_dx, in_tensor.dx, decimal=4)
+
+    def test_layer4(self):
+        in_tensor = Tensor([16, 2, 2], x=[1., 2., 0.5, 3.] * 16)
+        out_tensor = Tensor([16, 2, 1], dx=[0.03631, -0.47803] * 16)
+
+        expected_gates_x = np.array([0.8177, 0.9608, 0.8519, 0.8175, 0.8498, 0.9811, 0.8703, 0.8499] * 16).reshape((16, 2, 4)).swapaxes(0, 1)
+        expected_gates_dx = np.array([-0.0170, -0.0016, -0., 0.0017, -0.0193, -0.0011, -0.0063, -0.0553] * 16).reshape((16, 2, 4)).swapaxes(0, 1)
+        expected_h = np.array([0.5363, 0.7719] * 16).reshape((16, 2, 1)).swapaxes(0, 1)
+        expected_dh = np.array([0.0180, -0.4780] * 16).reshape((16, 2, 1)).swapaxes(0, 1)
+        expected_c = np.array([0.7857, 1.5176] * 16).reshape((16, 2, 1)).swapaxes(0, 1)
+        expected_dc = np.array([-0.0534, -0.0711] * 16).reshape((16, 2, 1)).swapaxes(0, 1)
+        expected_dW = np.array([-0.4274, -0.0352, -0.0504, -0.4148, -1.4752, -0.1062, -0.3027, -2.6017]).reshape((2, 4))
+        expected_dU = np.array([-0.1663, -0.0095, -0.0541, -0.4752]).reshape((1, 4))
+        expected_db = np.array([-0.5825, -0.0441, -0.1009, -0.8578])
+        expected_dx = np.array([-0.0081, -0.0048, -0.0474, -0.0307] * 16).reshape((16, 2, 2))
+
+        self.layer4.forward(in_tensor, out_tensor)
+
+        self.layer4.backward(out_tensor, in_tensor)
+
+        self.layer4.calculate_delta_weights(out_tensor, in_tensor)
+
+        np.testing.assert_array_almost_equal(expected_gates_x, self.layer4.gates.x, decimal=4)
+        np.testing.assert_array_almost_equal(expected_gates_dx, self.layer4.gates.dx, decimal=4)
+        np.testing.assert_array_almost_equal(expected_h, self.layer4.h.x, decimal=4)
+        np.testing.assert_array_almost_equal(expected_dh, self.layer4.h.dx, decimal=4)
+        np.testing.assert_array_almost_equal(expected_c, self.layer4.c.x, decimal=4)
+        np.testing.assert_array_almost_equal(expected_dc, self.layer4.c.dx, decimal=4)
+        np.testing.assert_array_almost_equal(expected_dW, self.layer4.W.dx, decimal=4)
+        np.testing.assert_array_almost_equal(expected_dU, self.layer4.U.dx, decimal=4)
+        np.testing.assert_array_almost_equal(expected_db, self.layer4.b.dx, decimal=4)
+        np.testing.assert_array_almost_equal(expected_dx, in_tensor.dx, decimal=4)
+
     def test_forward3(self):
-        in_tensor = Tensor([3, 1, 2], x=[-1.5, -1., -0.5, 0., 0.5, 1.])
-        out_tensor = Tensor([1, 3])
+        in_tensor = Tensor([1, 3, 2], x=[-1.5, -1., -0.5, 0., 0.5, 1.])
+        out_tensor = Tensor([1, 3, 3], dx=[0., 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8])
 
         self.layer3.forward(in_tensor, out_tensor)
 
-        print(out_tensor.x)
+        self.layer3.backward(out_tensor, in_tensor)
 
-
+        self.layer3.calculate_delta_weights(out_tensor, in_tensor)

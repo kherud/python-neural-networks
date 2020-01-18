@@ -19,3 +19,8 @@ class Dropout(Layer):
 
     def backward(self, in_tensor: Tensor, out_tensor: Tensor) -> None:
         out_tensor.dx = np.where(self._mask == 0, in_tensor.dx, 0)
+
+
+class LayerNormalization(Layer):
+    def __init__(self, input_shape: List):
+        super().__init__(input_shape, input_shape)
