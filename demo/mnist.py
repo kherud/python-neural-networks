@@ -9,6 +9,7 @@ from nn.loss import CrossEntropy
 from nn.metrics import f1_score_mean, accuracy
 from nn.network import NeuralNetwork
 from nn.optimizer import MinibatchGradientDescent, Adam, SimpleAdam, Momentum, Adagrad, RMSProp
+from nn.regularization import Dropout
 
 mnist = tf.keras.datasets.mnist
 
@@ -33,13 +34,17 @@ for i in range(len(_x_test) // batch_size):
 
 loss = CrossEntropy([batch_size, 10])
 # optimizer = MinibatchGradientDescent(loss)
-optimizer = Adam(loss, weight_decay=1e-8, learning_rate=1e-3)
+optimizer = RMSProp(loss, weight_decay=1e-8, learning_rate=1e-3)
 # optimizer = SimpleAdam(loss, weight_decay=1e-8, learning_rate=1e-3)
 metrics = [accuracy, f1_score_mean]
 # xavier for tanh sigmoid, kaiming else
 
 neural_network = NeuralNetwork([
-    Dense([batch_size, 784], [batch_size, 64], kaiming_normal),
+    Dense([batch_size, 784], [batch_size, 200], kaiming_normal),
+    Dropout([batch_size, 200]),
+    ReLU([batch_size, 200]),
+    Dense([batch_size, 200], [batch_size, 64], kaiming_normal),
+    Dropout([batch_size, 64]),
     ReLU([batch_size, 64]),
     Dense([batch_size, 64], [batch_size, 10], kaiming_normal),
     Softmax([batch_size, 10])

@@ -254,6 +254,7 @@ class TestLSTM(unittest.TestCase):
         np.testing.assert_array_almost_equal(expected_db, self.layer4.b.dx, decimal=4)
         np.testing.assert_array_almost_equal(expected_dx, in_tensor.dx, decimal=4)
 
+    @unittest.SkipTest
     def test_forward3(self):
         in_tensor = Tensor([1, 3, 2], x=[-1.5, -1., -0.5, 0., 0.5, 1.])
         out_tensor = Tensor([1, 3, 3], dx=[0., 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8])

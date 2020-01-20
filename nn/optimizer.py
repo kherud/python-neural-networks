@@ -4,7 +4,7 @@ import numpy as np
 from typing import List, Callable
 from abc import ABC, abstractmethod
 
-from nn.base import Tensor
+from nn.base import Tensor, State
 from nn.loss import Loss
 from nn.network import NeuralNetwork
 
@@ -25,6 +25,7 @@ class Optimizer(ABC):
                  batch_size: int = 16,
                  metrics: List[Callable] = None):
         for epoch in range(epochs):
+            neural_network.set_state(State.TRAIN)
             desc = "train {}/{} loss = {{:.3f}}".format(epoch + 1, epochs)
             pbar = tqdm.trange(len(x_train), desc=desc.format(np.inf))
             loss_total = 0
@@ -50,6 +51,7 @@ class Optimizer(ABC):
                   x_test: List[Tensor],
                   y_test: List[Tensor],
                   metrics: List[Callable]):
+        neural_network.set_state(State.PREDICT)
         predictions = []
         truths = []
         loss_total = 0

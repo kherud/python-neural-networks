@@ -2,8 +2,7 @@ import numpy as np
 from typing import List, Callable, Tuple
 from abc import ABC, abstractmethod
 
-from nn.base import Tensor
-from nn.network import State
+from nn.base import Tensor, State
 from nn.initializer import zeros, ones, xavier_normal
 
 
@@ -23,8 +22,6 @@ class Layer(ABC):
 
     def _set_state(self, state: State):
         self._state = state
-
-
 
 
 class TrainableLayer(Layer, ABC):

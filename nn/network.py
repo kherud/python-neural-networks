@@ -1,13 +1,7 @@
-from enum import Enum
 from typing import Tuple, List, Callable
-from nn.base import Tensor
+from nn.base import Tensor, State
 import nn.layer
 import numpy as np
-
-
-class State(Enum):
-    TRAIN = 1
-    PREDICT = 2
 
 
 class NeuralNetwork:
