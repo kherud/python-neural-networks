@@ -1,12 +1,12 @@
 import unittest
-import nn.activation
+import gigann.activation
 import numpy as np
-from nn.base import Tensor
+from gigann.base import Tensor
 
 
 class TestSigmoid(unittest.TestCase):
     def setUp(self):
-        self.layer = nn.activation.Sigmoid([1, 3])
+        self.layer = gigann.activation.Sigmoid([1, 3])
         self.x1 = Tensor([1, 3], x=[-0.0469, 0.2406, 0.0561])
         self.x2 = Tensor([1, 3], x=[0.4883, 0.5599, 0.5140], dx=[0.1803, 0.2261, -0.3567])
         self.y1 = Tensor([1, 3])
@@ -28,8 +28,8 @@ class TestSigmoid(unittest.TestCase):
 
 class TestSoftmax(unittest.TestCase):
     def setUp(self):
-        self.layer = nn.activation.Softmax([1, 2])
-        self.layer2 = nn.activation.Softmax([2, 2])
+        self.layer = gigann.activation.Softmax([1, 2])
+        self.layer2 = gigann.activation.Softmax([2, 2])
         self.x1 = Tensor([1, 2], x=[-0.0728, 0.0229])
         self.x2 = Tensor([1, 2], x=[0.4761, 0.5239], dx=[-1.4901, -0.1798])
         self.y1 = Tensor([1, 2])
@@ -73,7 +73,7 @@ class TestSoftmax(unittest.TestCase):
 
 class TestReLU(unittest.TestCase):
     def setUp(self):
-        self.layer = nn.activation.ReLU([1, 6])
+        self.layer = gigann.activation.ReLU([1, 6])
         self.x1 = Tensor([1, 6], x=[-0.0469, 0.2406, 0.0561, -0.0469, 0.2406, 0.0561], dx=[1., 2., 3., 4., 5., 6.])
         self.y1 = Tensor([1, 6])
 

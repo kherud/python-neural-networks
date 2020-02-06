@@ -1,26 +1,26 @@
 import unittest
-import nn.loss
-import nn.layer
-import nn.activation
+import gigann.loss
+import gigann.layer
+import gigann.activation
 import numpy as np
-from nn.base import Tensor
-from nn.network import NeuralNetwork
+from gigann.base import Tensor
+from gigann.network import NeuralNetwork
 
 
 class TestNeuralNetwork(unittest.TestCase):
     def setUp(self):
         self.nn1 = NeuralNetwork([
-            nn.layer.Dense([1, 3], [1, 3], None),
-            nn.activation.Sigmoid([1, 3]),
-            nn.layer.Dense([1, 3], [1, 2], None),
-            nn.activation.Softmax([1, 2])
+            gigann.layer.Dense([1, 3], [1, 3], None),
+            gigann.activation.Sigmoid([1, 3]),
+            gigann.layer.Dense([1, 3], [1, 2], None),
+            gigann.activation.Softmax([1, 2])
         ])
 
         self.nn2 = NeuralNetwork([
-            nn.layer.Dense([16, 3], [16, 3], None),
-            nn.activation.Sigmoid([16, 3]),
-            nn.layer.Dense([16, 3], [16, 2], None),
-            nn.activation.Softmax([16, 2])
+            gigann.layer.Dense([16, 3], [16, 3], None),
+            gigann.activation.Sigmoid([16, 3]),
+            gigann.layer.Dense([16, 3], [16, 2], None),
+            gigann.activation.Softmax([16, 2])
         ])
 
         self.nn1.layers[0].W = self.nn2.layers[0].W = Tensor([3, 3], x=[-0.5057, 0.3987, -0.8943, 0.3356, 0.1673, 0.8321, -0.3485, -0.4597, -0.1121])
@@ -28,8 +28,8 @@ class TestNeuralNetwork(unittest.TestCase):
         self.nn1.layers[2].W = self.nn2.layers[2].W = Tensor([3, 2], x=[0.4047, 0.9563, -0.8192, -0.1274, 0.3662, -0.7252])
         self.nn1.layers[2].b = self.nn2.layers[2].b = Tensor([2], x=[0., 0.])
 
-        self.loss1 = nn.loss.CrossEntropy([1, 2])
-        self.loss2 = nn.loss.CrossEntropy([16, 2])
+        self.loss1 = gigann.loss.CrossEntropy([1, 2])
+        self.loss2 = gigann.loss.CrossEntropy([16, 2])
 
     def test_nn1_forward(self):
         expected = [

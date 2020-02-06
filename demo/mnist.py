@@ -1,15 +1,15 @@
 import numpy as np
 import tensorflow as tf
 
-from nn.activation import Sigmoid, Softmax, ReLU
-from nn.base import Tensor
-from nn.initializer import normal, kaiming_normal
-from nn.layer import Dense
-from nn.loss import CrossEntropy
-from nn.metrics import f1_score_mean, accuracy
-from nn.network import NeuralNetwork
-from nn.optimizer import MinibatchGradientDescent, Adam, SimpleAdam, Momentum, Adagrad, RMSProp
-from nn.regularization import Dropout
+from gigann.activation import Sigmoid, Softmax, ReLU
+from gigann.base import Tensor
+from gigann.initializer import normal, kaiming_normal
+from gigann.layer import Dense
+from gigann.loss import CrossEntropy
+from gigann.metrics import f1_score_mean, accuracy
+from gigann.network import NeuralNetwork
+from gigann.optimizer import MinibatchGradientDescent, Adam, SimpleAdam, Momentum, Adagrad, RMSProp
+from gigann.regularization import Dropout
 
 mnist = tf.keras.datasets.mnist
 
