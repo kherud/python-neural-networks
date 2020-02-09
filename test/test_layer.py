@@ -1,18 +1,18 @@
 import unittest
-import gigann.layer
 import numpy as np
+import gigann.layer
 from gigann.base import Tensor
 
 
 class TestDense(unittest.TestCase):
     def setUp(self):
-        self.layer1 = gigann.layer.Dense([1, 3], [1, 3], None)
-        self.layer2 = gigann.layer.Dense([1, 3], [1, 2], None)
+        self.layer1 = gigann.layer.Dense([1, 3], [1, 3])
+        self.layer2 = gigann.layer.Dense([1, 3], [1, 2])
 
         self.layer1.W = Tensor([3, 3], x=[-0.5057, 0.3987, -0.8943, 0.3356, 0.1673, 0.8321, -0.3485, -0.4597, -0.1121])
-        self.layer1.b = Tensor(3, x=[0., 0., 0.])
+        self.layer1.b = Tensor([3], x=[0., 0., 0.])
         self.layer2.W = Tensor([3, 2], x=[0.4047, 0.9563, -0.8192, -0.1274, 0.3662, -0.7252])
-        self.layer2.b = Tensor(2, x=[0., 0.])
+        self.layer2.b = Tensor([2], x=[0., 0.])
 
     def test_forward1(self):
         expected = np.array([-.0469, .2406, .0561]).reshape(1, 3)

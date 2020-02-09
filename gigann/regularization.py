@@ -42,4 +42,4 @@ class LayerNormalization(Layer):
         out_tensor.x += self.beta
 
     def backward(self, in_tensor: Tensor, out_tensor: Tensor) -> None:
-        pass
+        raise NotImplementedError()

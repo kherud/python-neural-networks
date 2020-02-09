@@ -1,6 +1,6 @@
 import unittest
-import gigann.loss
 import numpy as np
+import gigann.loss
 from gigann.base import Tensor
 
 

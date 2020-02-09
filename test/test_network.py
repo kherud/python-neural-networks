@@ -1,8 +1,8 @@
 import unittest
+import numpy as np
 import gigann.loss
 import gigann.layer
 import gigann.activation
-import numpy as np
 from gigann.base import Tensor
 from gigann.network import NeuralNetwork
 
@@ -10,16 +10,16 @@ from gigann.network import NeuralNetwork
 class TestNeuralNetwork(unittest.TestCase):
     def setUp(self):
         self.nn1 = NeuralNetwork([
-            gigann.layer.Dense([1, 3], [1, 3], None),
+            gigann.layer.Dense([1, 3], [1, 3]),
             gigann.activation.Sigmoid([1, 3]),
-            gigann.layer.Dense([1, 3], [1, 2], None),
+            gigann.layer.Dense([1, 3], [1, 2]),
             gigann.activation.Softmax([1, 2])
         ])
 
         self.nn2 = NeuralNetwork([
-            gigann.layer.Dense([16, 3], [16, 3], None),
+            gigann.layer.Dense([16, 3], [16, 3]),
             gigann.activation.Sigmoid([16, 3]),
-            gigann.layer.Dense([16, 3], [16, 2], None),
+            gigann.layer.Dense([16, 3], [16, 2]),
             gigann.activation.Softmax([16, 2])
         ])
 
@@ -77,7 +77,6 @@ class TestNeuralNetwork(unittest.TestCase):
 
         np.testing.assert_array_almost_equal(expected_deltas[0], self.nn1.tensors[0].dx, decimal=4)
         np.testing.assert_array_almost_equal(expected_deltas[1], self.nn1.tensors[2].dx, decimal=4)
-
 
     def test_nn2_forward(self):
         expected = [

@@ -10,7 +10,7 @@ class NeuralNetwork:
         self.tensors = [Tensor(layer.output_shape) for layer in self.layers]
         self.state = State.TRAIN
 
-    def forward(self, x: Tensor) -> np.array:
+    def forward(self, x: Tensor) -> Tensor:
         for i in range(len(self.layers)):
             self.layers[i].forward(x, self.tensors[i])
             x = self.tensors[i]

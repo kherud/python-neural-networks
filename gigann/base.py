@@ -2,9 +2,11 @@ import numpy as np
 from enum import Enum
 from typing import Callable, List
 
+
 class State(Enum):
     TRAIN = 1
     PREDICT = 2
+
 
 class Tensor:
     # TODO: refactor

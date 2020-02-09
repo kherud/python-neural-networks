@@ -1,6 +1,6 @@
 import unittest
-import gigann.activation
 import numpy as np
+import gigann.activation
 from gigann.base import Tensor
 
 
@@ -67,8 +67,6 @@ class TestSoftmax(unittest.TestCase):
         self.layer2.backward(in_tensor, out_tensor)
 
         np.testing.assert_array_almost_equal(expected, out_tensor.dx, decimal=4)
-
-
 
 
 class TestReLU(unittest.TestCase):
