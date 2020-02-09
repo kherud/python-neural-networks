@@ -1,9 +1,10 @@
-import numpy as np
 from typing import List
 
-from .initializer import ones, zeros
-from .layer import Layer
-from .base import Tensor, State
+import numpy as np
+
+from gigann.initializer import ones, zeros
+from gigann.layer import Layer
+from gigann import Tensor, State
 
 
 class Dropout(Layer):

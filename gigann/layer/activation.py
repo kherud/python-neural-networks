@@ -1,7 +1,9 @@
-import numpy as np
-from .layer import Layer
-from .base import Tensor
 from typing import List
+
+import numpy as np
+
+from gigann.layer import Layer
+from gigann import Tensor
 
 
 class Sigmoid(Layer):

@@ -1,12 +1,13 @@
-import tqdm
 import logging
-import numpy as np
 from typing import List, Callable
 from abc import ABC, abstractmethod
 
-from .base import Tensor, State
-from .loss import Loss
-from .network import NeuralNetwork
+import tqdm
+import numpy as np
+
+from gigann import Tensor, State
+from gigann.loss import Loss
+from gigann.network import NeuralNetwork
 
 
 class Optimizer(ABC):

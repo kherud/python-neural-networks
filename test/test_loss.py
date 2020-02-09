@@ -1,7 +1,9 @@
 import unittest
+
 import numpy as np
+
 import gigann.loss
-from gigann.base import Tensor
+from gigann import Tensor
 
 
 class TestCrossEntropy(unittest.TestCase):

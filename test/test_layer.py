@@ -1,13 +1,15 @@
 import unittest
+
 import numpy as np
-import gigann.layer
-from gigann.base import Tensor
+
+import gigann.layer.trainable
+from gigann import Tensor
 
 
 class TestDense(unittest.TestCase):
     def setUp(self):
-        self.layer1 = gigann.layer.Dense([1, 3], [1, 3])
-        self.layer2 = gigann.layer.Dense([1, 3], [1, 2])
+        self.layer1 = gigann.layer.trainable.Dense([1, 3], [1, 3])
+        self.layer2 = gigann.layer.trainable.Dense([1, 3], [1, 2])
 
         self.layer1.W = Tensor([3, 3], x=[-0.5057, 0.3987, -0.8943, 0.3356, 0.1673, 0.8321, -0.3485, -0.4597, -0.1121])
         self.layer1.b = Tensor([3], x=[0., 0., 0.])
@@ -81,7 +83,7 @@ class TestDense(unittest.TestCase):
 
 class TestLSTM(unittest.TestCase):
     def setUp(self):
-        self.layer1 = gigann.layer.LSTM([1, 3, 2], [1, 3])
+        self.layer1 = gigann.layer.trainable.LSTM([1, 3, 2], [1, 3])
 
         self.layer1.h_init = Tensor([1, 3], x=[1.3812, 0.5108, 1.7547])
         self.layer1.c_init = Tensor([1, 3], x=[0.5468, 1.3003, -0.8365])
@@ -96,7 +98,7 @@ class TestLSTM(unittest.TestCase):
         self.layer1.U.x[:, 9:12] = np.array([-0.315, -0.1448, -0.2816, -0.3676, 0.059, -0.4758, -0.103, -0.0204, -0.0876]).reshape(-1, 3)
         self.layer1.b.x *= 0
 
-        self.layer2 = gigann.layer.LSTM([1, 2, 2], [1, 2, 1])
+        self.layer2 = gigann.layer.trainable.LSTM([1, 2, 2], [1, 2, 1])
 
         self.layer2.h_init = Tensor([1, 1], x=[0.])
         self.layer2.c_init = Tensor([1, 1], x=[0.])
@@ -114,7 +116,7 @@ class TestLSTM(unittest.TestCase):
         self.layer2.b.x[2:3] = np.array([0.15]).reshape(1)
         self.layer2.b.x[3:4] = np.array([0.1]).reshape(1)
 
-        self.layer3 = gigann.layer.LSTM([1, 3, 2], [1, 3])
+        self.layer3 = gigann.layer.trainable.LSTM([1, 3, 2], [1, 3])
 
         self.layer3.h_init = Tensor([1, 3], x=[0., 0., 0.])
         self.layer3.c_init = Tensor([1, 3], x=[0., 0., 0.])
@@ -133,7 +135,7 @@ class TestLSTM(unittest.TestCase):
         self.layer3.b.x[9:12] = np.array([1., 1., 1.]).reshape(3)
 
 
-        self.layer4 = gigann.layer.LSTM([16, 2, 2], [16, 2, 1])
+        self.layer4 = gigann.layer.trainable.LSTM([16, 2, 2], [16, 2, 1])
 
         self.layer4.h_init = Tensor([1, 1], x=[0.])
         self.layer4.c_init = Tensor([1, 1], x=[0.])

@@ -1,6 +1,6 @@
 import numpy as np
 
-from .base import Tensor
+from gigann import Tensor
 
 
 def zeros(tensor: Tensor):

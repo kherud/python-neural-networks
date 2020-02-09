@@ -1,7 +1,9 @@
 from typing import Tuple, List, Callable
-from .base import Tensor, State
-from .layer import Layer
+
 import numpy as np
+
+from gigann import Tensor, State
+from gigann.layer import Layer
 
 
 class NeuralNetwork:

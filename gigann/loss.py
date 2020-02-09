@@ -1,6 +1,8 @@
 from abc import ABC, abstractmethod
+
 import numpy as np
-from .base import Tensor
+
+from gigann import Tensor
 
 
 class Loss(ABC):
