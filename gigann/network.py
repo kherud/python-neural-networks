@@ -1,7 +1,5 @@
 from typing import Tuple, List, Callable
 
-import numpy as np
-
 from gigann import Tensor, State
 from gigann.layer import Layer
 

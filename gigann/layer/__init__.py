@@ -1,11 +1,7 @@
 from typing import List, Callable, Tuple
 from abc import ABC, abstractmethod
 
-import numpy as np
-
 from gigann import Tensor, State
-from gigann.initializer import zeros, ones, xavier_normal
-
 
 class Layer(ABC):
     def __init__(self, input_shape: List, output_shape: List) -> None:
