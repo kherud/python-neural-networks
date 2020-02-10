@@ -3,6 +3,7 @@ from abc import ABC, abstractmethod
 
 from gigann import Tensor, State
 
+
 class Layer(ABC):
     def __init__(self, input_shape: List, output_shape: List) -> None:
         self.input_shape = input_shape

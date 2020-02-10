@@ -37,5 +37,4 @@ optimizer.optimize(neural_network,
                    x_train, y_train,
                    x_test, y_test,
                    epochs=25,
-                   batch_size=batch_size,
                    metrics=metrics)

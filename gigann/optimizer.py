@@ -1,4 +1,3 @@
-import logging
 from typing import List, Callable
 from abc import ABC, abstractmethod
 
@@ -23,7 +22,6 @@ class Optimizer(ABC):
                  x_test: List[Tensor] = None,
                  y_test: List[Tensor] = None,
                  epochs: int = 1,
-                 batch_size: int = 16,
                  metrics: List[Callable] = None):
         for epoch in range(epochs):
             neural_network.set_state(State.TRAIN)
@@ -44,7 +42,8 @@ class Optimizer(ABC):
                 self._optimize_layers(neural_network)
 
             if x_test is not None and y_test is not None:
-                metrics = metrics if metrics is not None else []
+                if metrics is None:
+                    metrics = []
                 self._evaluate(neural_network, x_test, y_test, metrics)
 
     def _evaluate(self,
