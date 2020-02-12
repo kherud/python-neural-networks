@@ -27,7 +27,7 @@ class CrossEntropy(Loss, ABC):
         super().__init__(input_shape)
 
     def forward(self, prediction: Tensor, truth: Tensor) -> None:
-        np.negative(np.sum(truth.x * np.log(prediction.x), axis=1).reshape(-1, 1), out=self.loss.x)
+        np.negative(np.sum(truth.x * np.log(prediction.x), axis=-1, keepdims=True), out=self.loss.x)
 
     def backward(self, prediction: Tensor, truth: Tensor) -> None:
         np.negative(np.divide(truth.x, prediction.x), out=prediction.dx)
