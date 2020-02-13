@@ -1,4 +1,4 @@
-from typing import Tuple, List, Callable
+from typing import List
 
 from gigann import Tensor, State
 from gigann.layer import Layer
@@ -23,9 +23,10 @@ class NeuralNetwork:
 
     def calculate_delta_weights(self, x: Tensor) -> None:
         for i in range(len(self.layers)):
-            if not hasattr(self.layers[i], 'calculate_delta_weights'):
-                continue
-            self.layers[i].calculate_delta_weights(self.tensors[i], self.tensors[i - 1] if i > 0 else x)
+            try:
+                self.layers[i].calculate_delta_weights(self.tensors[i], self.tensors[i - 1] if i > 0 else x)
+            except AttributeError:
+                pass
 
     def set_state(self, state: State):
         self.state = state

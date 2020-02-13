@@ -1,4 +1,4 @@
-from typing import List, Callable
+from typing import List, Callable, Iterable
 from abc import ABC, abstractmethod
 
 import tqdm
@@ -22,7 +22,7 @@ class Optimizer(ABC):
                  x_test: List[Tensor] = None,
                  y_test: List[Tensor] = None,
                  epochs: int = 1,
-                 metrics: List[Callable] = None):
+                 metrics: Iterable[Callable] = ()):
         for epoch in range(epochs):
             neural_network.set_state(State.TRAIN)
             desc = "train {}/{} loss = {{:.3f}}".format(epoch + 1, epochs)
@@ -42,15 +42,13 @@ class Optimizer(ABC):
                 self._optimize_layers(neural_network)
 
             if x_test is not None and y_test is not None:
-                if metrics is None:
-                    metrics = []
                 self._evaluate(neural_network, x_test, y_test, metrics)
 
     def _evaluate(self,
                   neural_network: NeuralNetwork,
                   x_test: List[Tensor],
                   y_test: List[Tensor],
-                  metrics: List[Callable]):
+                  metrics: Iterable[Callable]):
         neural_network.set_state(State.PREDICT)
         predictions = []
         truths = []
@@ -72,14 +70,15 @@ class Optimizer(ABC):
 
     def _optimize_layers(self, neural_network):
         for layer in neural_network.layers:
-            if not hasattr(layer, 'calculate_delta_weights'):
-                continue
-            for weight in layer.get_weights():
-                if self.weight_decay:
-                    weight.dx += self.weight_decay * weight.x
-                self._optimize_parameters(weight)
-            for bias in layer.get_bias():
-                self._optimize_parameters(bias)
+            try:
+                for weight in layer.get_weights():
+                    if self.weight_decay:
+                        weight.dx += self.weight_decay * weight.x
+                    self._optimize_parameters(weight)
+                for bias in layer.get_bias():
+                    self._optimize_parameters(bias)
+            except AttributeError:
+                pass
 
     @abstractmethod
     def _optimize_parameters(self, tensor: Tensor):
