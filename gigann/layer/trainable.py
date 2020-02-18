@@ -7,7 +7,7 @@ from gigann.initializer import zeros, ones, xavier_normal
 from gigann.layer import TrainableLayer
 
 
-class Dense(TrainableLayer):
+class FullyConnected(TrainableLayer):
     def __init__(self,
                  input_shape: List,
                  output_shape: List,

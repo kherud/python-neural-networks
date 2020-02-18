@@ -4,7 +4,7 @@ from gigann.metrics import f1_score_mean, accuracy
 from gigann.network import NeuralNetwork
 from gigann.optimizer import MinibatchGradientDescent, Adam, SimpleAdam, Momentum, Adagrad, RMSProp
 from gigann.layer.activation import Sigmoid, Softmax, ReLU
-from gigann.layer.trainable import Dense, LSTM
+from gigann.layer.trainable import FullyConnected, LSTM
 
 
 batch_size = 32
@@ -24,7 +24,7 @@ metrics = [accuracy, f1_score_mean]
 neural_network = NeuralNetwork([
     LSTM([batch_size, 14, 56], [batch_size, 14, 64]),
     LSTM([batch_size, 14, 64], [batch_size, 32]),
-    Dense([batch_size, 32], [batch_size, 10]),
+    FullyConnected([batch_size, 32], [batch_size, 10]),
     Softmax([batch_size, 10])
 ])
 

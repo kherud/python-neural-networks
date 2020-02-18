@@ -12,16 +12,16 @@ from gigann.network import NeuralNetwork
 class TestNeuralNetwork(unittest.TestCase):
     def setUp(self):
         self.nn1 = NeuralNetwork([
-            gigann.layer.trainable.Dense([1, 3], [1, 3]),
+            gigann.layer.trainable.FullyConnected([1, 3], [1, 3]),
             gigann.layer.activation.Sigmoid([1, 3]),
-            gigann.layer.trainable.Dense([1, 3], [1, 2]),
+            gigann.layer.trainable.FullyConnected([1, 3], [1, 2]),
             gigann.layer.activation.Softmax([1, 2])
         ])
 
         self.nn2 = NeuralNetwork([
-            gigann.layer.trainable.Dense([16, 3], [16, 3]),
+            gigann.layer.trainable.FullyConnected([16, 3], [16, 3]),
             gigann.layer.activation.Sigmoid([16, 3]),
-            gigann.layer.trainable.Dense([16, 3], [16, 2]),
+            gigann.layer.trainable.FullyConnected([16, 3], [16, 2]),
             gigann.layer.activation.Softmax([16, 2])
         ])
 

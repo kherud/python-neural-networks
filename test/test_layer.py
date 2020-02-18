@@ -6,10 +6,10 @@ import gigann.layer.trainable
 from gigann import Tensor
 
 
-class TestDense(unittest.TestCase):
+class TestFullyConnected(unittest.TestCase):
     def setUp(self):
-        self.layer1 = gigann.layer.trainable.Dense([1, 3], [1, 3])
-        self.layer2 = gigann.layer.trainable.Dense([1, 3], [1, 2])
+        self.layer1 = gigann.layer.trainable.FullyConnected([1, 3], [1, 3])
+        self.layer2 = gigann.layer.trainable.FullyConnected([1, 3], [1, 2])
 
         self.layer1.W = Tensor([3, 3], x=[-0.5057, 0.3987, -0.8943, 0.3356, 0.1673, 0.8321, -0.3485, -0.4597, -0.1121])
         self.layer1.b = Tensor([3], x=[0., 0., 0.])

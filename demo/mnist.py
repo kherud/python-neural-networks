@@ -6,7 +6,7 @@ from gigann.network import NeuralNetwork
 from gigann.optimizer import MinibatchGradientDescent, Adam, SimpleAdam, Momentum, Adagrad, RMSProp
 from gigann.layer.activation import Sigmoid, Softmax, ReLU
 from gigann.layer.regularization import Dropout
-from gigann.layer.trainable import Dense
+from gigann.layer.trainable import FullyConnected
 
 batch_size = 32
 
@@ -23,13 +23,13 @@ optimizer = RMSProp(loss, weight_decay=1e-8, learning_rate=1e-3)
 metrics = [accuracy, f1_score_mean]
 
 neural_network = NeuralNetwork([
-    Dense([batch_size, 784], [batch_size, 200], kaiming_normal),
+    FullyConnected([batch_size, 784], [batch_size, 200], kaiming_normal),
     Dropout([batch_size, 200]),
     ReLU([batch_size, 200]),
-    Dense([batch_size, 200], [batch_size, 64], kaiming_normal),
+    FullyConnected([batch_size, 200], [batch_size, 64], kaiming_normal),
     Dropout([batch_size, 64]),
     ReLU([batch_size, 64]),
-    Dense([batch_size, 64], [batch_size, 10], kaiming_normal),
+    FullyConnected([batch_size, 64], [batch_size, 10], kaiming_normal),
     Softmax([batch_size, 10])
 ])
 
