@@ -9,6 +9,8 @@ class NeuralNetwork:
         self.layers = layers
         self.tensors = [Tensor(layer.output_shape) for layer in self.layers]
         self.state = State.TRAIN
+        self.input_shape = self.layers[0].input_shape
+        self.output_shape = self.layers[-1].output_shape
 
     def forward(self, x: Tensor) -> Tensor:
         for i in range(len(self.layers)):
@@ -31,4 +33,9 @@ class NeuralNetwork:
     def set_state(self, state: State):
         self.state = state
         for layer in self.layers:
-            layer._set_state(state)
+            layer.set_state(state)
+
+    def set_batch_size(self, batch_size: int):
+        for layer in self.layers:
+            layer.set_batch_size(batch_size)
+        self.tensors = [Tensor(layer.output_shape) for layer in self.layers]

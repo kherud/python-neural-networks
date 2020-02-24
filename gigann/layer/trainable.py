@@ -229,3 +229,28 @@ class LSTM(TrainableLayer):
 
     def _tanh(self, _in):
         np.tanh(_in, out=_in)
+
+    def set_batch_size(self, batch_size: int):
+        self.input_shape[0] = batch_size
+        self.output_shape[0] = batch_size
+
+        self.h = Tensor(self.input_shape[:-1][::-1] + [self.output_shape[-1]])
+        self.c = Tensor(self.input_shape[:-1][::-1] + [self.output_shape[-1]])
+
+        self.gates = Tensor(self.input_shape[:-1][::-1] + [4 * self.output_shape[-1]])
+        self.a = Tensor(self.input_shape[:-1][::-1] + [self.output_shape[-1]],
+                        x=self.gates.x[:, :, :self.output_shape[-1]],
+                        dx=self.gates.dx[:, :, :self.output_shape[-1]],
+                        reference=True)
+        self.i = Tensor(self.input_shape[:-1][::-1] + [self.output_shape[-1]],
+                        x=self.gates.x[:, :, self.output_shape[-1]:self.output_shape[-1] * 2],
+                        dx=self.gates.dx[:, :, self.output_shape[-1]:self.output_shape[-1] * 2],
+                        reference=True)
+        self.f = Tensor(self.input_shape[:-1][::-1] + [self.output_shape[-1]],
+                        x=self.gates.x[:, :, self.output_shape[-1] * 2:self.output_shape[-1] * 3],
+                        dx=self.gates.dx[:, :, self.output_shape[-1] * 2:self.output_shape[-1] * 3],
+                        reference=True)
+        self.o = Tensor(self.input_shape[:-1][::-1] + [self.output_shape[-1]],
+                        x=self.gates.x[:, :, self.output_shape[-1] * 3:self.output_shape[-1] * 4],
+                        dx=self.gates.dx[:, :, self.output_shape[-1] * 3:self.output_shape[-1] * 4],
+                        reference=True)

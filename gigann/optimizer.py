@@ -1,8 +1,9 @@
+import os
+import tqdm
+import pickle
+import numpy as np
 from typing import List, Callable, Iterable
 from abc import ABC, abstractmethod
-
-import tqdm
-import numpy as np
 
 from gigann import Tensor, State
 from gigann.loss import Loss
@@ -22,7 +23,10 @@ class Optimizer(ABC):
                  x_test: List[Tensor] = None,
                  y_test: List[Tensor] = None,
                  epochs: int = 1,
-                 metrics: Iterable[Callable] = ()):
+                 metrics: Iterable[Callable] = (),
+                 save_to: str = None,
+                 save_by: str = None):
+        best_evaluation = 0
         for epoch in range(epochs):
             neural_network.set_state(State.TRAIN)
             desc = "train {}/{} loss = {{:.3f}}".format(epoch + 1, epochs)
@@ -42,18 +46,31 @@ class Optimizer(ABC):
                 self._optimize_layers(neural_network)
 
             if x_test is not None and y_test is not None:
-                self._evaluate(neural_network, x_test, y_test, metrics)
+                evaluation = self._evaluate(neural_network, x_test, y_test, metrics)
+
+                eval_desc = "test " + ", ".join(f"{k} = {v:.3f}" for k, v in evaluation.items())
+                pbar.write(eval_desc)
+
+                if save_by is not None:
+                    assert save_by in evaluation, "save_by metric not specified"
+                if save_by in evaluation and evaluation[save_by] <= best_evaluation:
+                    continue
+                elif save_by in evaluation:
+                    best_evaluation = evaluation[save_by]
+                if save_to:
+                    path = os.path.join(save_to, f"model-{best_evaluation:.3f}.pkl")
+                    with open(path, "wb") as file:
+                        pickle.dump(neural_network, file)
 
     def _evaluate(self,
                   neural_network: NeuralNetwork,
                   x_test: List[Tensor],
                   y_test: List[Tensor],
-                  metrics: Iterable[Callable]):
+                  metrics: Iterable[Callable]) -> dict:
         neural_network.set_state(State.PREDICT)
         predictions = []
         truths = []
         loss_total = 0
-        # pbar = tqdm.trange(len(x_test), desc="test")
         for i in range(len(x_test)):
             prediction = neural_network.forward(x_test[i])
             predictions.extend(np.argmax(prediction.x, axis=1))
@@ -62,11 +79,9 @@ class Optimizer(ABC):
             self.loss.forward(prediction, y_test[i])
             loss = self.loss.get_loss()
             loss_total -= loss_total / (i + 1) - loss / (i + 1)
-        desc = "test: loss = {:.4f}".format(loss_total)
-        for metric in metrics:
-            desc += "; {} = {:.4f}".format(metric.__name__, metric(predictions, truths))
-        print(desc)
-        # pbar.set_description(desc)
+        evaluation = {metric.__name__: metric(predictions, truths) for metric in metrics}
+        evaluation["loss"] = loss_total
+        return evaluation
 
     def _optimize_layers(self, neural_network):
         for layer in neural_network.layers:

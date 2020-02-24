@@ -18,8 +18,12 @@ class Layer(ABC):
     def backward(self, in_tensor: Tensor, out_tensor: Tensor) -> None:
         pass
 
-    def _set_state(self, state: State):
+    def set_state(self, state: State):
         self._state = state
+
+    def set_batch_size(self, batch_size: int):
+        self.output_shape[0] = batch_size
+        self.input_shape[0] = batch_size
 
 
 class TrainableLayer(Layer, ABC):

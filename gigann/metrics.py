@@ -10,7 +10,8 @@ def f1_score_mean(prediction: np.array, truth: np.array) -> float:
 
 
 def f1_score(prediction: np.array, truth: np.array) -> np.array:
-    confusion_matrix = np.zeros(shape=(10, 10)).astype(int)
+    n_classes = np.unique(truth).shape[0]
+    confusion_matrix = np.zeros(shape=(n_classes, n_classes)).astype(np.int)
     for index, (prediction, target) in enumerate(zip(prediction, truth)):
         confusion_matrix[target, prediction] += 1
     precision = np.diag(confusion_matrix) / np.sum(confusion_matrix, axis=0)

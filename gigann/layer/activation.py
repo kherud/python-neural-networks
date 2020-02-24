@@ -30,6 +30,11 @@ class Softmax(Layer):
         np.subtract(in_tensor.dx * in_tensor.x, np.einsum("ij,ij,ik->ik", in_tensor.dx, in_tensor.x, in_tensor.x),
                     out=out_tensor.dx)
 
+    def set_batch_size(self, batch_size: int):
+        self.input_shape[0] = batch_size
+        self.output_shape[0] = batch_size
+        self._exponents = np.empty(shape=self.input_shape)
+
 
 class Softmax2D(Softmax):
     def __init__(self, shape: List) -> None:
