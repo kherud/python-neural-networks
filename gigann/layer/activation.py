@@ -31,8 +31,7 @@ class Softmax(Layer):
                     out=out_tensor.dx)
 
     def set_batch_size(self, batch_size: int):
-        self.input_shape[0] = batch_size
-        self.output_shape[0] = batch_size
+        super().set_batch_size(batch_size)
         self._exponents = np.empty(shape=self.input_shape)
 
 

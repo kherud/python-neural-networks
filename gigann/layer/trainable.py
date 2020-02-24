@@ -231,8 +231,7 @@ class LSTM(TrainableLayer):
         np.tanh(_in, out=_in)
 
     def set_batch_size(self, batch_size: int):
-        self.input_shape[0] = batch_size
-        self.output_shape[0] = batch_size
+        super().set_batch_size(batch_size)
 
         self.h = Tensor(self.input_shape[:-1][::-1] + [self.output_shape[-1]])
         self.c = Tensor(self.input_shape[:-1][::-1] + [self.output_shape[-1]])
