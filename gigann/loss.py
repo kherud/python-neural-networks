@@ -31,3 +31,14 @@ class CrossEntropy(Loss, ABC):
 
     def backward(self, prediction: Tensor, truth: Tensor) -> None:
         np.negative(np.divide(truth.x, prediction.x), out=prediction.dx)
+
+
+class MeanSquaredError(Loss, ABC):
+    def __init__(self, input_shape):
+        super().__init__(input_shape)
+
+    def forward(self, prediction: Tensor, truth: Tensor) -> None:
+        np.divide(np.square(prediction.x - truth.x), 2).sum(axis=-1, keepdims=True, out=self.loss.x)
+
+    def backward(self, prediction: Tensor, truth: Tensor) -> None:
+        np.subtract(truth.x, prediction.x, out=prediction.dx)
