@@ -6,8 +6,14 @@ teh best neural network in town
 python setup.py install
 ```
 
+Optionally validate your installation by running unit tests 
+
+```
+python setup.py test
+```
+
 ## Usage
-Complete examples can be found in the demo/ folder
+Complete examples can be found in the [demo](demo) folder
 ```python
 neural_network = NeuralNetwork([
     LSTM([batch_size, 14, 56], [batch_size, 14, 64]),
@@ -95,7 +101,7 @@ Fully connected layers have a number of neurons with weights and a bias.
 LSTMs are used for modeling time series by using 2D data samples, where every sample contains a number of time steps. LSTM layers have a hidden internal state which propagates information between these time steps. By default, only shared weights and biases are trained.  When the optional `train_initial_state` parameter is set, the initial internal state is also trained, otherwise it is empty.
 
 ```python
-from gigann.network import NeuralNetwork
+from gigann.layer.trainable import *
 
 FullyConnected(input_shape: List[int],
                output_shape: List[int],
