@@ -21,6 +21,3 @@ def load_mnist(path="datasets/mnist.npz"):
 
     return (x_train, y_train), (x_test, y_test)
 
-
-def make_tensors(data: np.array, batch_size=32) -> List[Tensor]:
-    return [Tensor(x=data[i - batch_size:i]) for i in range(batch_size, len(data), batch_size)]

@@ -6,3 +6,5 @@
 **/*.egg-info
 *.kdev4
 *.npz
+build
+dist

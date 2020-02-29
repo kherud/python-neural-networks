@@ -1,4 +1,4 @@
-from demo import load_mnist, make_tensors
+from gigann import make_tensors
 from gigann.initializer import normal, kaiming_normal
 from gigann.loss import CrossEntropy
 from gigann.metrics import f1_score_mean, accuracy
@@ -7,6 +7,8 @@ from gigann.optimizer import MinibatchGradientDescent, Adam, SimpleAdam, Momentu
 from gigann.layer.activation import Sigmoid, Softmax, ReLU
 from gigann.layer.regularization import Dropout
 from gigann.layer.trainable import FullyConnected
+
+from helper import load_mnist
 
 batch_size = 32
 

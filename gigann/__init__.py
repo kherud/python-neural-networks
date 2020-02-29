@@ -40,3 +40,7 @@ class Tensor:
             self.dx = np.empty(shape=shape)
         # self.x = self.x.astype(np.float32)
         # self.dx = self.x.astype(np.float32)
+
+
+def make_tensors(data: np.array, batch_size=32) -> List[Tensor]:
+    return [Tensor(x=data[i - batch_size:i]) for i in range(batch_size, len(data), batch_size)]
