@@ -1,10 +1,10 @@
+import numpy as np
 from gigann import make_tensors
 from gigann.loss import CrossEntropy
-from gigann.metrics import f1_score_mean, accuracy
+from gigann.metrics import f1_score_mean, accuracy, confusion_matrix
 from gigann.network import NeuralNetwork
 from gigann.optimizer import MinibatchGradientDescent, Adam, SimpleAdam, Momentum, Adagrad, RMSProp
 from gigann.layer.activation import Sigmoid, Softmax, ReLU
-from gigann.layer.regularization import Dropout
 from gigann.layer.trainable import FullyConnected, LSTM
 
 from helper import load_mnist
@@ -34,5 +34,15 @@ print("batch_size:", batch_size)
 optimizer.optimize(neural_network,
                    x_train, y_train,
                    x_test, y_test,
-                   epochs=25,
+                   epochs=5,
                    metrics=metrics)
+
+# prediction phase
+predictions, truths = [], []
+for x, y in zip(x_test, y_test):
+    out_tensor = neural_network.forward(x)
+    predictions.extend(np.argmax(out_tensor.x, axis=-1))
+    truths.extend(np.argmax(y.x, axis=-1))
+
+evaluation = confusion_matrix(predictions, truths)
+print(evaluation)
